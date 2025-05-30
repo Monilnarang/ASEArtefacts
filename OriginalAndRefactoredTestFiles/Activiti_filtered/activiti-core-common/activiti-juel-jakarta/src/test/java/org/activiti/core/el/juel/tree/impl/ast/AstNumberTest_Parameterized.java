@@ -1,0 +1,47 @@
+package org.activiti.core.el.juel.tree.impl.ast;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.fail;
+import jakarta.el.ELException;
+import org.activiti.core.el.juel.test.TestCase;
+import org.activiti.core.el.juel.tree.Bindings;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.Arguments;
+import java.util.stream.Stream;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
+
+public class AstNumberTest_Parameterized extends TestCase {
+
+    private Bindings bindings = new Bindings(null, null, null);
+
+    AstNumber parseNode(String expression) {
+        return (AstNumber) parse(expression).getRoot().getChild(0);
+    }
+
+    private void assertTrue(boolean readOnly) {
+    }
+
+    @Test
+    public void testGetValue_1() {
+        assertEquals(1l, parseNode("${1}").getValue(bindings, null, null));
+    }
+
+    @Test
+    public void testGetValue_2() {
+        assertEquals(1d, parseNode("${1}").getValue(bindings, null, Double.class));
+    }
+
+    @ParameterizedTest
+    @MethodSource("Provider_testEval_1to2")
+    public void testEval_1to2(long param1, String param2) {
+        assertEquals(param1, parseNode("${1}").eval(bindings, param2));
+    }
+
+    static public Stream<Arguments> Provider_testEval_1to2() {
+        return Stream.of(arguments(1l, "${1}"), arguments(1d, "${1.0}"));
+    }
+}
